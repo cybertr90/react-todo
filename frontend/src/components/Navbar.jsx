@@ -1,11 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { UserContext } from '../../context/userContext'
+import axios from 'axios';
 
 function Navbar() {
   const { user } = useContext(UserContext);
 const session = Boolean(user?.id);
-
+  const logout = () => {
+    axios.get('/logout')
+    .then(response => location.reload())
+    .catch(error => console.log(error))
+  }
   
   return (  
     <>
@@ -33,7 +38,7 @@ const session = Boolean(user?.id);
                       {user?.username}
                     </Link>
                     <ul className="dropdown-menu">
-                      <li><Link className="dropdown-item" href="#">Logout</Link></li>
+                      <li><Link className="dropdown-item" href="#" onClick={logout}>Logout</Link></li>
                       <li className='dropdown-item'></li>
                     </ul>
                   </div>

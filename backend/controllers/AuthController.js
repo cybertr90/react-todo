@@ -55,3 +55,8 @@ export const getUser = (req,res) => {
      else return res.send(null);
     
 }
+
+export const logout = (req,res) => {
+  res.clearCookie("jwt_token")
+  res.send("asdasda");
+}

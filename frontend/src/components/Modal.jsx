@@ -1,56 +1,99 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import axios from 'axios';
+import { UserContext } from '../../context/userContext';
+import {toast} from 'react-hot-toast'
 
 
-function ModalComponent({action, show, handleClose, todoId}) {
+function ModalComponent({action, show, handleClose, todo}) {
   
-  const [header, setHeader] = useState('');
+  const [current, setCurrent] = useState('');
+
   const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const [defaultValue, getDefaultValue] = useState('');
+
   
   useEffect(() => {
-    if(action == "e") {
-      
-      setHeader("Edit")
-    }
-    else if(action == "d") setHeader("Delete");
+    
+    setCurrent(todo)
+    
+  }, [todo])
   
-  }, [action])
+  const deleteTodo = () => {
+    axios.delete("/delete/"+ todo._id)
+    .then(() => location.reload())
+    .catch(error => console.log(error))
+    
+  }
+  console.log(defaultValue)
+  const submitForm = (e) => {
+    e.preventDefault()
+    if(!title || !content) return toast.error("No changes made");
+    axios.post("/change-todo", {title, content, id: todo._id  })
+    .then(({data}) => {
+      toast.success(data.success)
+      setTimeout(() => {
+        location.reload()
+      }, 2000);
+    })
+    .catch(error => console.log(error))
 
+    
 
-
-
-
-
-  return (
+  }
+    return (
     <>
   
-    <Modal show={show} onHide={handleClose}>
+    {
+      action == "e" ? (
+        <Modal show={show} onHide={handleClose}>
       <Modal.Header closeButton>
-        <Modal.Title>{header}</Modal.Title>
+        <Modal.Title>EDIT</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <form>
+        <form onSubmit={submitForm}>
           <div className="form-group my-2">
             <label htmlFor="title" className="form-label">Title</label>
-            <input type="text" name="title" id="" className='form-control'/>
+            <input onChange={e => setTitle(e.target.value)} type="text" name="title" className='form-control' defaultValue={current.title}/>
           </div>
           <div className="form-group my-2">
             <label htmlFor="content" className="form-label">Content</label>
-            <input type="text" name="content" className='form-control' id="" />
+            <input onChange={e => setContent(e.target.value)} type="text" name="content" className='form-control' defaultValue={current.content}/>
           </div>
-        </form>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
+         <div className="d-flex gap-2 float-end">
+         <Button variant="secondary" onClick={handleClose}>
           Close
         </Button>
-        <Button variant="primary" onClick={handleClose}>
+        <Button variant="primary" type="submit">
           Save Changes
         </Button>
+         </div>
+        </form>
+      </Modal.Body>
+      
+    </Modal>
+      )
+      :
+      (
+        <Modal show={show} onHide={handleClose}>
+      <Modal.Header closeButton>
+        <Modal.Title>DELETE</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        Are you Sure ?
+      </Modal.Body>
+      <Modal.Footer>
+        <a className='btn btn-danger' role='button' onClick={deleteTodo}>
+          Delete
+        </a>
+        
       </Modal.Footer>
     </Modal>
+      )
+    }
   
     </>
   );

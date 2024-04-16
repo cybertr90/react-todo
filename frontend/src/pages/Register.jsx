@@ -8,13 +8,18 @@ function Register() {
     password: '',
     verify_password: ''
   });
-  
+  const navigate = useNavigate();
   const registerUser = (e) => {
       e.preventDefault();
       axios.post('/register',cred)
       .then(response => {
         if(response.data.error) toast.error(response.data.error);
-        else if(response.data.success) toast.success(response.data.success);
+        else if(response.data.success) {
+          toast.success(response.data.success)
+          setTimeout(() => {
+            navigate('/login')
+          }, 2000);
+        };
       })
       .catch(error => console.log(error))
   }

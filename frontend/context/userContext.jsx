@@ -18,9 +18,7 @@ const UserContextProvider = ({ children }) => {
     }
 
     useEffect(() => {
-        if(!user){
-           getCurrentUser();
-        }
+         getCurrentUser();
         
     }, [])
 

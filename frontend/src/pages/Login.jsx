@@ -18,7 +18,6 @@ function Login() {
     
     axios.post('/login', cred)
     .then(response =>{
-      console.log(response)
       if(response.data.success)
       {
         navigate('/');
