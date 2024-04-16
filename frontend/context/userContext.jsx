@@ -22,10 +22,6 @@ const UserContextProvider = ({ children }) => {
         
     }, [])
 
-    const userData = {
-        user,
-        setUser
-    }
 
     return(
         <UserContext.Provider value={{user,setUser,getCurrentUser}}>
